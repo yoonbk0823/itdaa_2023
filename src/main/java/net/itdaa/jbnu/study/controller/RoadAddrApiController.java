@@ -82,21 +82,33 @@ public class RoadAddrApiController {
 
                 }
                 // 건물번호가 본번,부번 모두 입력된 형태라면 (예 : 흑석로 84-116)
-                else if (bldgNumberArray.length == ) {
+
+                /*** 추가 - bldgNumberArray 는 배열인데 입력받은 문자를 "-" 를 기준으로 앞뒤를 나누어서 배열로 저장합니다.
+                 *         따라서 배열의 길이 (bldgNumberArray.length) 가 2인 경우에는 건물번호 본번/부번 두개의 배열 데이터가 있음을 의미합니다.
+                 */                           
+                else if (bldgNumberArray.length ==2 ) {
 
                     // 건물번호(본번/부번)이 문자로 되어 있으므로 숫자로 바꿔야 합니다. (DB는 숫자컬럼으로 되어 있음)
                     buildingMainNumber = Integer.parseInt(bldgNumberArray[0]);
                     buildingSubNumber = Integer.parseInt(bldgNumberArray[1]);
 
                     // 도로명 검색어를 = 로 하여 건물본번, 건물부번 모두가 일치하는 도로명 주소를 찾습니다.
-                    searchResultList = roadAddrRepository.;
+
+                    /** 추가 - findByRoadNameAndBldgMainNoAndBldgSubNo 함수는 , 도로명주소와 빌딩 본번, 부번 모두 일치하는 데이터를 조회하는 JPA 활용한
+                     *        RoadAddrRepository 클래스에 있는 메서드를 호출합니다.
+                     */ 
+                    searchResultList = roadAddrRepository.findByRoadNameAndBldgMainNoAndBldgSubNo(searchRoadAddress, buildingMainNumber, buildingSubNumber);
                 }
             }
             // searchBldgNumber null 이면 도로명 검색어만 입력된 것입니다.
             else {
 
                 // 도로명 검색어를 Like 로 하여 도로명 주소를 찾습니다.
-                searchResultList = roadAddrRepository.;
+
+                /** 추가 - findByRoadNameStartingWith 함수는 , 도로명주소에 일부 글자가 입력받은 글자와 일치하면 데이터를 조회해줍니다.
+                 *         SQL문의 LIKE 문법을 활용합니다.
+                 */
+                searchResultList = roadAddrRepository.findByRoadNameStartingWith(searchRoadAddress);
 
             }
 
